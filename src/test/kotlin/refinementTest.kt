@@ -1,4 +1,5 @@
 import io.kotest.assertions.assertSoftly
+import io.kotest.common.runBlocking
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.doubles.shouldBeGreaterThan
@@ -6,8 +7,8 @@ import io.kotest.matchers.shouldBe
 
 class PeakonSurvey : WordSpec({
 
-    val peakon = Peakon(detractors(), passive(), promoters())
-    val allPredictions = peakon.predict(detractors() + promoters() + passive())
+    val peakon = Peakon(detractors() + passive() + promoters())
+    val allPredictions = runBlocking { peakon.predict(detractors() + promoters() + passive()) }
 
     "Detractors detected with high probability" should {
         with(peakon.predict(detractors())) {
@@ -36,12 +37,12 @@ class PeakonSurvey : WordSpec({
             this.promoters shouldHaveSize 0
             this.notEvaluated shouldHaveSize 0
 
-            passives.forEach {
-                val (score, probability) = it.second
-                it.first.comment {
+            passives.forEach { (feedback, prediction) ->
+                feedback.comment {
+                    val (score, probability) = prediction
                     assertSoftly {
                         score shouldBe Score.Passive
-                        probability shouldBeGreaterThan peakon.targetProbability
+                        probability shouldBeGreaterThan 0.2
                     }
                 }
             }
@@ -90,7 +91,7 @@ class PeakonSurvey : WordSpec({
                 it.first.comment {
                     assertSoftly {
                         score shouldBe Score.Passive
-                        probability shouldBeGreaterThan peakon.targetProbability
+                        probability shouldBeGreaterThan 0.2
                     }
                 }
             }

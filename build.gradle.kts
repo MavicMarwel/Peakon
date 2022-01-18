@@ -9,7 +9,7 @@ repositories {
 }
 
 plugins {
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version "1.6.0"
 }
 
 tasks.withType<Test> {
@@ -23,10 +23,11 @@ tasks.withType<KotlinCompile> {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("gradle-plugin"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
 
     implementation("com.github.nwillc:poink:0.4.6") // IO xlsx
     implementation("org.nield:kotlin-statistics:1.2.1")
 
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:4.0.6")
-    testImplementation("io.kotest:kotest-assertions-core-jvm:4.0.6")
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.0.3")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:5.0.3")
 }

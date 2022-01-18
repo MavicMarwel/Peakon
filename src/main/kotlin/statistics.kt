@@ -1,23 +1,17 @@
 import com.github.nwillc.poink.workbook
-import java.io.FileOutputStream
 import java.nio.file.Path
 import java.nio.file.Paths
 
 fun main() {
     val root = Paths.get("C:\\Users\\mtereshc\\Sandbox\\Pulse_Action\\review")
-
+    
     buildLanguageAlertsReport(
-        root.resolve("06_2020\\Peakon Comments June 2020.xlsx"),
-        root.resolve("06_2020\\language_alerts.xlsx")
-    )
-
-    buildLanguageAlertsReport(
-        root.resolve("07_2020\\Comments_13.07.2020.xlsx"),
-        root.resolve("07_2020\\language_alerts.xlsx")
+        root.resolve("08_2020\\Peakon Comments_28.07.2020.xlsx"),
+        root.resolve("08_2020\\language_alerts.xlsx")
     )
 }
 
-private fun buildLanguageAlertsReport(fileToProceed: Path, outputFile: Path) {
+private fun buildLanguageAlertsReport(fileToProceed: Path, outputFile: Path) =
     createWorkbook(
         findLanguageAlerts(
             readComments(
@@ -27,7 +21,7 @@ private fun buildLanguageAlertsReport(fileToProceed: Path, outputFile: Path) {
     ).write(
         outputFile.toAbsolutePath().toString()
     )
-}
+
 
 private fun findLanguageAlerts(feedbacks: Sequence<Feedback>) = feedbacks
     .filter { feedback ->

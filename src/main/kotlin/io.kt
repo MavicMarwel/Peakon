@@ -7,36 +7,26 @@ import org.nield.kotlinstatistics.CategoryProbability
 import java.io.FileInputStream
 import java.nio.file.Path
 
-fun readComments(filePath: Path): Sequence<Feedback> {
+fun readComments(filePath: Path, sheetName: String = "Comments"): Sequence<Feedback> {
+    val df = DataFormatter()
+
     fun Row.toFeedback(): Feedback {
-        val df = DataFormatter()
         fun cellValue(indx: Int) = df.formatCellValue(getCell(indx))
         return Feedback(
-            cellValue(0),
-            cellValue(1),
-            cellValue(2),
-            cellValue(3).toScore(),
-            cellValue(4),
-            cellValue(5),
-            cellValue(6)
+            date = cellValue(0),
+            question = cellValue(1),
+            comment = cellValue(2),
+            score = cellValue(3),
+            group = cellValue(4),
+            driver = cellValue(5),
+            language = cellValue(6)
         )
     }
     return FileInputStream(filePath.toString()).use { PWorkbook(XSSFWorkbook(it)) }.iterator().asSequence()
-        .filter { sheet -> sheet.sheetName == "Comments" }
+        .filter { sheet -> sheet.sheetName == sheetName }
         .flatMap { sheet -> sheet.iterator().asSequence() }
         .drop(1) //drop headers
-        .map { it.toFeedback() }
-}
-
-private fun String?.toScore(): Score {
-    if (null == this || this.isEmpty())
-        return NotEvaluated
-    return when (toInt()) {
-        in 9..10 -> Promoters
-        in 7..8 -> Passive
-        in 0..6 -> Detractors
-        else -> NotEvaluated
-    }
+        .map(Row::toFeedback)
 }
 
 fun Feedback.toList() =
